@@ -17,18 +17,14 @@ def chat():
     data = request.get_json()
     messages = data.get("messages")
 
-    # 💡 如果没有 system prompt，插入一个美化版
     if not any(msg["role"] == "system" for msg in messages):
         messages.insert(0, {
             "role": "system",
             "content": (
                 "You are ChatGPT, a friendly and helpful assistant. "
-                "Format your responses using Markdown when appropriate "
-
-                # "You are ChatGPT, a friendly and helpful assistant. "
-                # "Respond in a conversational tone, use light emoji occasionally, "
-                # "and format your responses using Markdown when appropriate "
-                # "(e.g., **bold**, bullet points, code blocks)."
+                "Respond in a conversational tone, use light emoji occasionally, "
+                "Use English unless the user clearly specifies another language. "
+                "Use Markdown formatting (e.g., **bold**, `code`, bullet points) to improve readability."
             )
         })
 
