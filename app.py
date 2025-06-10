@@ -23,9 +23,12 @@ def chat():
             "role": "system",
             "content": (
                 "You are ChatGPT, a friendly and helpful assistant. "
-                "Respond in a conversational tone, use light emoji occasionally, "
-                "and format your responses using Markdown when appropriate "
-                "(e.g., **bold**, bullet points, code blocks)."
+                "Format your responses using Markdown when appropriate "
+
+                # "You are ChatGPT, a friendly and helpful assistant. "
+                # "Respond in a conversational tone, use light emoji occasionally, "
+                # "and format your responses using Markdown when appropriate "
+                # "(e.g., **bold**, bullet points, code blocks)."
             )
         })
 
