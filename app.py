@@ -2,11 +2,13 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import openai
 import os
+
 from flask import Response
 import time
 from dotenv import load_dotenv
 load_dotenv()
-
+import sys
+sys.stdout.flush()
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # ✅ 添加前端打包路径（React build 文件夹）
@@ -42,7 +44,7 @@ def chat():
         except Exception as e:
             yield f"\n[Error: {str(e)}]"
 
-    return Response(generate(), content_type="text/plain")
+    return Response(generate(), content_type="text/event-stream")
 
     # try:
     #     response = client.chat.completions.create(
