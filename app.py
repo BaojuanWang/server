@@ -44,7 +44,10 @@ def chat():
         except Exception as e:
             yield f"\n[Error: {str(e)}]"
 
-    return Response(generate(), content_type="text/event-stream")
+    return Response(generate(), content_type="text/event-stream", headers={
+        "Cache-Control": "no-cache",
+        "X-Accel-Buffering": "no",  # Nginx 相关优化（如用 Nginx）
+    })
 
     # try:
     #     response = client.chat.completions.create(
