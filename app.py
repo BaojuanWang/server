@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import openai
 import os
-
+from flask import Response
+import time
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -28,15 +29,30 @@ def chat():
             )
         })
 
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=messages
-        )
-        reply = response.choices[0].message.content.strip()
-        return jsonify({"reply": reply})
-    except Exception as e:
-        return jsonify({"reply": f"Error: {str(e)}"}), 500
+    def generate():
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=messages,
+                stream=True
+            )
+            for chunk in response:
+                if "choices" in chunk and chunk.choices[0].delta.content:
+                    yield chunk.choices[0].delta.content
+        except Exception as e:
+            yield f"\n[Error: {str(e)}]"
+
+    return Response(generate(), content_type="text/plain")
+
+    # try:
+    #     response = client.chat.completions.create(
+    #         model="gpt-4o",
+    #         messages=messages
+    #     )
+    #     reply = response.choices[0].message.content.strip()
+    #     return jsonify({"reply": reply})
+    # except Exception as e:
+    #     return jsonify({"reply": f"Error: {str(e)}"}), 500
 
 # ✅ 为部署前端设置主页访问
 @app.route("/")
