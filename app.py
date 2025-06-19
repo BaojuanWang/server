@@ -14,7 +14,6 @@ client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # ✅ 添加前端打包路径（React build 文件夹）
 app = Flask(__name__, static_folder="../client/build", static_url_path="/")
 CORS(app)
-
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
@@ -31,24 +30,15 @@ def chat():
             )
         })
 
-    def generate():
-        try:
-            response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=messages,
-                stream=True
-            )
-            for chunk in response:
-                if "choices" in chunk and chunk.choices[0].delta.content:
-                    yield chunk.choices[0].delta.content
-        except Exception as e:
-            yield f"\n[Error: {str(e)}]"
-
-    return Response(generate(), content_type="text/event-stream", headers={
-        "Cache-Control": "no-cache",
-        "X-Accel-Buffering": "no",  # Nginx 相关优化（如用 Nginx）
-    })
-
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=messages
+        )
+        reply = response.choices[0].message.content.strip()
+        return jsonify({"reply": reply})
+    except Exception as e:
+        return jsonify({"reply": f"Error: {str(e)}"}), 500
     # try:
     #     response = client.chat.completions.create(
     #         model="gpt-4o",
