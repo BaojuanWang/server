@@ -49,15 +49,15 @@ def chat():
     # except Exception as e:
     #     return jsonify({"reply": f"Error: {str(e)}"}), 500
 
-# ✅ 为部署前端设置主页访问
-@app.route("/")
-def serve():
-    return send_from_directory(app.static_folder, "index.html")
-
-# ✅ 捕捉所有其他路径，交由 React 前端路由处理
-@app.errorhandler(404)
-def not_found(e):
-    return send_from_directory(app.static_folder, "index.html")
+# # ✅ 为部署前端设置主页访问
+# @app.route("/")
+# def serve():
+#     return send_from_directory(app.static_folder, "index.html")
+#
+# # ✅ 捕捉所有其他路径，交由 React 前端路由处理
+# @app.errorhandler(404)
+# def not_found(e):
+#     return send_from_directory(app.static_folder, "index.html")
 
 # ✅ Flask 监听公网 IP，支持部署
 if __name__ == "__main__":
