@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__, static_folder="../client/build", static_url_path="/")
-CORS(app)
+CORS(app, origins="*")
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 OPENAI_URL     = "https://api.openai.com/v1/chat/completions"
