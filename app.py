@@ -28,6 +28,7 @@ def chat_securelearn():
 
     payload = {
         "model": "gpt-4o",
+        "max_tokens": 4096,
         "messages": [{"role": "system", "content": system}] + messages,
     }
     headers = {
@@ -41,13 +42,32 @@ def chat_securelearn():
     return jsonify({"content": [{"text": text}]}), resp.status_code
 
 
-# ── Serve React client (catch-all) ───────────────────────
-@app.route("/", defaults={"path": ""})
-@app.route("/<path:path>")
-def serve_react(path):
-    if path and os.path.exists(os.path.join(app.static_folder, path)):
-        return send_from_directory(app.static_folder, path)
-    return send_from_directory(app.static_folder, "index.html")
+# ── Plain Chat API ────────────────────────────────────────
+@app.route("/chat", methods=["POST"])
+def chat_plain():
+    if not OPENAI_API_KEY:
+        return jsonify({"error": "OPENAI_API_KEY not set"}), 500
+
+    body = request.get_json()
+    if not body:
+        return jsonify({"error": "Invalid JSON"}), 400
+
+    messages = body.get("messages", [])
+
+    payload = {
+        "model": "gpt-4o",
+        "max_tokens": 4096,
+        "messages": messages,
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {OPENAI_API_KEY}"
+    }
+
+    resp = requests.post(OPENAI_URL, headers=headers, json=payload, timeout=60)
+    data = resp.json()
+    text = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+    return jsonify({"reply": text}), resp.status_code
 
 
 if __name__ == "__main__":
